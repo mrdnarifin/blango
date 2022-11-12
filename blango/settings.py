@@ -29,7 +29,7 @@ class Dev(Configuration):
   SECRET_KEY = 'django-insecure-&!=9y436&^-bc$qia-mxngyf&xx)@ct)8lu@)=qxg_07-=z01w'
 
   # SECURITY WARNING: don't run with debug turned on in production!
-  DEBUG = False
+  DEBUG = True
 #   SECRET_KEY = values.SecretValue()
 
   ALLOWED_HOSTS = values.ListValue(["localhost", "0.0.0.0", ".codio.io"])
@@ -49,6 +49,7 @@ class Dev(Configuration):
       'django.contrib.contenttypes',
       'django.contrib.sessions',
       'django.contrib.messages',
+      "whitenoise.runserver_nostatic",
       'django.contrib.staticfiles',
       'blog',
       'crispy_forms',
@@ -57,6 +58,7 @@ class Dev(Configuration):
 
   MIDDLEWARE = [
       'django.middleware.security.SecurityMiddleware',
+      "whitenoise.middleware.WhiteNoiseMiddleware",
       'django.contrib.sessions.middleware.SessionMiddleware',
       'django.middleware.common.CommonMiddleware',
   #     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,6 +137,8 @@ class Dev(Configuration):
   # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
   STATIC_URL = '/static/'
+  STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+  STATIC_ROOT = BASE_DIR / "static"
 
   # Default primary key field type
   # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -142,6 +146,28 @@ class Dev(Configuration):
   DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
   CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
   CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+  LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+  }
 
 class Prod(Dev):
   DEBUG = False
