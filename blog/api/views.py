@@ -36,6 +36,10 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @method_decorator(cache_page(300))
+    def get(self, *args, **kwargs):
+        return super(UserDetail, self).get(*args, *kwargs)
+
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -47,6 +51,14 @@ class TagViewSet(viewsets.ModelViewSet):
             tag.posts, many=True, context={"request": request}
         )
         return Response(post_serializer.data)
+
+    @method_decorator(cache_page(300))
+    def list(self, *args, **kwargs):
+        return super(TagViewSet, self).list(*args, **kwargs)
+
+    @method_decorator(cache_page(300))
+    def retrieve(self, *args, **kwargs):
+        return super(TagViewSet, self).retrieve(*args, **kwargs)
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [AuthorModifyOrReadOnly | IsAdminUserForObject]
@@ -71,15 +83,3 @@ class PostViewSet(viewsets.ModelViewSet):
     @method_decorator(cache_page(120))
     def list(self, *args, **kwargs):
         return super(PostViewSet, self).list(*args, **kwargs)
-
-    @method_decorator(cache_page(300))
-    def get(self, *args, **kwargs):
-        return super(UserDetail, self).get(*args, *kwargs)
-
-    @method_decorator(cache_page(300))
-    def list(self, *args, **kwargs):
-        return super(TagViewSet, self).list(*args, **kwargs)
-
-    @method_decorator(cache_page(300))
-    def retrieve(self, *args, **kwargs):
-        return super(TagViewSet, self).retrieve(*args, **kwargs)
