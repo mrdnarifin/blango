@@ -20,6 +20,13 @@
         {% endcol %}
     {% endrow %}
 {% endif %}
+{% if post.hero_image %}
+    {% row %}
+        {% col %}
+            <img src="{{ post.hero_image.thumbnail.250x250.url }}"/>
+        {% endcol %}
+    {% endrow %}
+{% endif %}
 {% include "blog/post-comments.html" %}
 <!-- existing code here -->
 {% row %}
